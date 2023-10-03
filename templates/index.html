@@ -1,15 +1,24 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Harmonyhype</title>
-    <style>
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Date</title>
 </head>
-<body>
-<h1>HARMONYHYPE</h1>
+<body onload="loadEvent()">
+<h2>Next Event Date</h2>
+<p id="eventDate"></p>
 
+<script>
+    async function loadEvent() {
+        const response = await fetch('/schedule');
+        const data = await response.json();
+        if (response.status === 200) {
+            document.getElementById('eventDate').innerText = data.datetime;
+        } else {
+            document.getElementById('eventDate').innerText = data.message;
+        }
+    }
+</script>
 </body>
 </html>

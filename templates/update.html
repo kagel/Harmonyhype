@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Event Date</title>
+</head>
+<body>
+<h2>Update Event Date</h2>
+<form id="updateForm">
+    <label for="datetime">New Date (YYYY-MM-DD HH:MM:SS):</label>
+    <input type="text" id="datetime" required><br><br>
+
+    <input type="submit" value="Update">
+</form>
+<p id="message"></p>
+
+<script>
+    document.getElementById('updateForm').onsubmit = async function (event) {
+        event.preventDefault();
+
+        const token = localStorage.getItem('token');
+        const response = await fetch('/schedule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({
+                datetime: document.getElementById('datetime').value
+            })
+        });
+
+        const data = await response.json();
+        document.getElementById('message').innerText = data.message;
+    }
+</script>
+</body>
+</html>

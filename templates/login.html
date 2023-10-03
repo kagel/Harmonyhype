@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+<h2>Login</h2>
+<form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" required><br><br>
+
+    <input type="submit" value="Login">
+</form>
+<p id="error"></p>
+
+<script>
+    document.getElementById('loginForm').onsubmit = async function (event) {
+        event.preventDefault();
+
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            })
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            localStorage.setItem('token', data.token);
+
+            fetch('/update', {
+                headers: {
+                    'Authorization': data.token
+                }
+            })
+                .then(updateResponse => updateResponse.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                })
+                .catch(error => {
+                    document.getElementById('error').innerText = "Failed to load update page.";
+                });
+        } else {
+            document.getElementById('error').innerText = data.message;
+        }
+    }
+</script>
+</body>
+</html>
